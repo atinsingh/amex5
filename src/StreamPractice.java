@@ -1,6 +1,4 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -22,24 +20,35 @@ public class StreamPractice {
         dishes.add(new Dish( "Sandwich", 1.5, DishType.VEG, Arrays.asList("Bread","Cheez","Lettuce","Tomato"),true));
         dishes.add(new Dish( "Avacado Toast", 1.5, DishType.VEGAN, Arrays.asList("Avacado","Bread","Salt"),true));
 
-        List<Dish> vegDish = dishes.stream().filter(d -> d.getDishType() == DishType.VEG).collect(Collectors.toList());
-        System.out.println(vegDish);
-        String string = dishes.stream().filter(d -> d.getDishType() == DishType.VEG).map(dish -> dish.getName()).collect(Collectors.joining(","));
-        System.out.println(string);
+        //
+        List<String> list = dishes.stream().map(Dish::getName).collect(Collectors.toList());
 
-        List<Dish> costLy = dishes.stream().filter(d -> d.getDishType() == DishType.NON_VEG).filter(d -> d.getPrice() > 20)
-                .collect(Collectors.toList());
-        System.out.println(costLy);
+        List<List<String>> collect1 = dishes.stream().map(dish -> dish.getIngredients()).collect(Collectors.toList());
 
-        List<Double> prices = dishes.stream().map(d -> d.getPrice()).collect(Collectors.toList());
-        System.out.println(prices);
-
-        boolean match = dishes.stream().anyMatch(d -> d.getDishType() == DishType.VEG);
-
-        System.out.println(match);
-        long count = dishes.stream().filter(d -> d.getDishType() == DishType.NON_VEG).filter(d -> d.getPrice() > 20).count();
-        System.out.println(count);
+        List<String> ingredients = dishes.stream().flatMap(dish -> dish.getIngredients().stream()).distinct().sorted().collect(Collectors.toList());
+        Set<Dish> dishSet = dishes.stream().collect(Collectors.toSet());
+        System.out.println(ingredients);
 
 
+        Map<String, Double> dishMap = dishes.stream().collect(Collectors.toMap(Dish::getName, Dish::getPrice));
+
+        System.out.println(dishMap);
+        Map<DishType, List<Dish>> map = dishes.stream().collect(Collectors.groupingBy(Dish::getDishType));
+        System.out.println("map = " + map);
+
+        List<Integer> list1 = Arrays.asList(1, 2, 4, 5, 5, 6, 6);
+
+        Integer reduce = list1.stream().reduce(1, (a, b) -> a * b);
+        System.out.println(reduce);
+        Integer integer = list1.stream().reduce(0, (a, b) -> a + b);
+        System.out.println("integer = " + integer);
+        Optional<String> optionalS = Optional.of("Atin");
+        printGreeting(Optional.of("isha"));
+
+    }
+
+    public static void printGreeting(Optional<String> name){
+        System.out.println("Hello " + name.orElse("Human").toUpperCase() + " How ar you");
+       //name.ifPresent(s-> System.out.println("Hello "+s.toUpperCase() +" How are you"));
     }
 }
